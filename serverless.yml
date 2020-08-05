@@ -1,0 +1,97 @@
+service: test
+package:
+  individually: true
+
+plugins:
+  - serverless-appsync-plugin
+  - serverless-pseudo-parameters
+  
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  appSync:
+    name: "test-appsync"
+    authenticationType: API_KEY
+
+    mappingTemplates:
+      - type: Query #Mutation
+        dataSource:  postLambdaDataSource
+        field: getAccount
+        request: "getAccount-request.vtl"
+        response: "getAccount-response.vtl"
+
+      - type: Query #Mutation
+        dataSource:  postLambdaDataSource
+        field: allAccounts
+        request: "allAccounts-request.vtl"
+        response: "allAccounts-response.vtl"
+
+      - type: Mutation #Mutation
+        dataSource:  postLambdaDataSource
+        field: addAccount
+        request: "addAccount-request.vtl"
+        response: "addAccount-response.vtl"
+
+       - type: Mutation #Mutation
+        dataSource:  postLambdaDataSource
+        field: updateAccount
+        request: "updateAccount-request.vtl"
+        response: "updateAccount-response.vtl"
+
+          - type: Mutation #Mutation
+        dataSource:  postLambdaDataSource
+        field: deleteAccount
+        request: "deleteAccount-request.vtl"
+        response: "deleteAccount-response.vtl"
+
+    serviceRole: "AppSyncServiceRole"
+    dataSources:
+      - type: AWS_LAMBDA
+        name: postLambdaDataSource
+        description: postLambdaDataSource
+        config:
+          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-resolver" 
+          serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }    
+
+
+provider:
+  name: aws
+  stage: dev
+  region:  us-east-1
+  profile: demo
+
+functions:
+  resolver:
+    handler: functions/resolver.main
+    package:
+      exclude:
+        - functions/**
+        - node_modules/**
+      include:
+        - functions/resolver.js
+
+resources:
+  Resources:
+    AppSyncLambdaServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "AppSyncLambdaServiceRole"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          - PolicyName: "AppSyncLambdaServiceRolePolicy"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "lambda:invokeFunction"
+                  Resource:
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-resolver"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-resolver:*"                  

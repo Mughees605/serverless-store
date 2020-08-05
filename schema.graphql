@@ -1,0 +1,112 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+input CreateAccountInput {
+	accountId: ID!
+	campaign: String!
+	city: String!
+	country: String!
+	createdAt: String
+	crustacean: String!
+	dairy: String!
+	deviceId: String!
+	diabetic: Boolean!
+	egg: Boolean!
+	email: String!
+	firstName: String!
+	fish: Boolean!
+	gluten: Boolean!
+	halal: Boolean!
+	kosher: String!
+	lastName: String!
+	medium: String!
+	peanuts: Boolean!
+	phone: String!
+	referrer: String!
+	source: String!
+	soy: Boolean!
+	treeNuts: Boolean!
+	vegetarian: Boolean!
+	vegan: Boolean!
+	wheat: Boolean!
+}
+input DeleteAccountInput {
+	accountId: ID!
+}
+
+
+input UpdateAccountInput {
+	accountId: ID!
+	campaign: String
+	city: String
+	country: String
+	createdAt: String
+	crustacean: String
+	dairy: String
+	deviceId: String
+	diabetic: Boolean
+	egg: Boolean
+	email: String
+	firstName: String
+	fish: Boolean
+	gluten: Boolean
+	halal: Boolean
+	kosher: String
+	lastName: String
+	medium: String
+	peanuts: Boolean
+	phone: String
+	referrer: String
+	source: String
+	soy: Boolean
+	treeNuts: Boolean
+	vegetarian: Boolean
+	vegan: Boolean
+	wheat: Boolean
+}
+
+type Query {
+    getAccount(id:ID!): Account
+    allAccounts: [Account]
+}
+type Mutation {
+    addAccount(input:CreateAccountInput): Account
+    updateAccount(input: UpdateAccountInput!): Account
+	deleteAccount(input: DeleteAccountInput!): Account
+}
+
+
+type Account {
+	accountId: ID!
+	campaign: String!
+	city: String!
+	country: String!
+	createdAt: String
+	crustacean: String!
+	dairy: String!
+	deviceId: String!
+	diabetic: Boolean!
+	egg: Boolean!
+	email: String!
+	firstName: String!
+	fish: Boolean!
+	gluten: Boolean!
+	halal: Boolean!
+	kosher: String!
+	lastName: String!
+	medium: String!
+	peanuts: Boolean!
+	phone: String!
+	referrer: String!
+	source: String!
+	soy: Boolean!
+	treeNuts: Boolean!
+	vegetarian: Boolean!
+	vegan: Boolean!
+	wheat: Boolean!
+}
+
+
+
+
