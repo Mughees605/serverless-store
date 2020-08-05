@@ -1,4 +1,4 @@
-service: test
+service: appsync
 package:
   individually: true
 
@@ -7,50 +7,52 @@ plugins:
   - serverless-pseudo-parameters
   
 custom:
+  accountTable: account-${self:custom.stage}
+
   stage: ${opt:stage, self:provider.stage}
   appSync:
-    name: "test-appsync"
+    name: "appsync"
     authenticationType: API_KEY
 
     mappingTemplates:
-      - type: Query #Mutation
-        dataSource:  postLambdaDataSource
+      - type: Query
+        dataSource:  ThtDynamodbAccountTable
         field: getAccount
         request: "getAccount-request.vtl"
         response: "getAccount-response.vtl"
 
-      - type: Query #Mutation
-        dataSource:  postLambdaDataSource
+      - type: Query 
+        dataSource:  ThtDynamodbAccountTable
         field: allAccounts
         request: "allAccounts-request.vtl"
         response: "allAccounts-response.vtl"
 
-      - type: Mutation #Mutation
-        dataSource:  postLambdaDataSource
+      - type: Mutation 
+        dataSource:  ThtDynamodbAccountTable
         field: addAccount
         request: "addAccount-request.vtl"
         response: "addAccount-response.vtl"
 
-       - type: Mutation #Mutation
-        dataSource:  postLambdaDataSource
+      - type: Mutation 
+        dataSource:  ThtDynamodbAccountTable
         field: updateAccount
         request: "updateAccount-request.vtl"
         response: "updateAccount-response.vtl"
 
-          - type: Mutation #Mutation
-        dataSource:  postLambdaDataSource
+      - type: Mutation 
+        dataSource:  ThtDynamodbAccountTable
         field: deleteAccount
         request: "deleteAccount-request.vtl"
         response: "deleteAccount-response.vtl"
 
     serviceRole: "AppSyncServiceRole"
     dataSources:
-      - type: AWS_LAMBDA
-        name: postLambdaDataSource
-        description: postLambdaDataSource
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbAccountTable
+        description: ThtDynamodbAccountTable
         config:
-          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-resolver" 
-          serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }    
+          tableName: ${self:custom.accountTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
 
 
 provider:
@@ -59,22 +61,12 @@ provider:
   region:  us-east-1
   profile: demo
 
-functions:
-  resolver:
-    handler: functions/resolver.main
-    package:
-      exclude:
-        - functions/**
-        - node_modules/**
-      include:
-        - functions/resolver.js
-
 resources:
   Resources:
-    AppSyncLambdaServiceRole:
+    AppSyncDynamodbServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
-        RoleName: "AppSyncLambdaServiceRole"
+        RoleName: "${self:custom.appSync.name}-Dynamodb-${self:custom.appSync.serviceRole}-${self:custom.stage}"
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -85,13 +77,19 @@ resources:
               Action:
                 - "sts:AssumeRole"
         Policies:
-          - PolicyName: "AppSyncLambdaServiceRolePolicy"
+          - PolicyName: "${self:custom.appSync.name}-Dynamodb-${self:custom.appSync.serviceRole}-Policy-${self:custom.stage}"
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
                 - Effect: "Allow"
                   Action:
-                    - "lambda:invokeFunction"
+                    - "dynamodb:GetItem"
+                    - "dynamodb:Scan"
+                    - "dynamodb:Query"
+                    - "dynamodb:PutItem"
+                    - "dynamodb:UpdateItem"
+                    - "dynamodb:DeleteItem"
                   Resource:
-                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-resolver"
-                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-resolver:*"                  
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.accountTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.accountTable}/*"
+                

@@ -1,0 +1,27 @@
+{
+  "name": "transporters-app",
+  "version": "1.1.0",
+  "description": "TransportersApp",
+  "main": "handler.js",
+  "scripts": {
+    "test": "serverless-bundle test"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.494.0",
+    "serverless-appsync-plugin": "^1.1.2",
+    "serverless-dotenv-plugin": "^2.3.2",
+    "serverless-offline": "^5.3.3",
+    "serverless-pseudo-parameters": "^2.4.0"
+  },
+  "dependencies": {
+    "amazon-cognito-identity-js": "^3.0.15",
+    "elasticsearch": "^16.4.0",
+    "node-fetch": "^2.6.0"
+  }
+}
