@@ -8,6 +8,7 @@ plugins:
   
 custom:
   accountTable: account-${self:custom.stage}
+  reviewTable: review-${self:custom.stage}
 
   stage: ${opt:stage, self:provider.stage}
   appSync:
@@ -19,31 +20,55 @@ custom:
         dataSource:  ThtDynamodbAccountTable
         field: getAccount
         request: "getAccount-request.vtl"
-        response: "getAccount-response.vtl"
-
+        response: "shared-response.vtl"
       - type: Query 
         dataSource:  ThtDynamodbAccountTable
         field: allAccounts
         request: "allAccounts-request.vtl"
-        response: "allAccounts-response.vtl"
+        response: "shared-response.vtl"
+
+      - type: Query 
+        dataSource:  ThtDynamodbReviewTable
+        field: getReview
+        request: "getReview-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbReviewTable
+        field: listReviews
+        request: "listReviews-request.vtl"
+        response: "shared-response.vtl"
 
       - type: Mutation 
         dataSource:  ThtDynamodbAccountTable
         field: addAccount
         request: "addAccount-request.vtl"
-        response: "addAccount-response.vtl"
-
+        response: "shared-response.vtl"
       - type: Mutation 
         dataSource:  ThtDynamodbAccountTable
         field: updateAccount
         request: "updateAccount-request.vtl"
-        response: "updateAccount-response.vtl"
-
+        response: "shared-response.vtl"
       - type: Mutation 
         dataSource:  ThtDynamodbAccountTable
         field: deleteAccount
         request: "deleteAccount-request.vtl"
-        response: "deleteAccount-response.vtl"
+        response: "shared-response.vtl"
+
+      - type: Mutation 
+        dataSource:  ThtDynamodbReviewTable
+        field: createReview
+        request: "createReview-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbReviewTable
+        field: updateReview
+        request: "updateReview-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbReviewTable
+        field: deleteReview
+        request: "deleteReview-request.vtl"
+        response: "shared-response.vtl"
 
     serviceRole: "AppSyncServiceRole"
     dataSources:
@@ -52,6 +77,12 @@ custom:
         description: ThtDynamodbAccountTable
         config:
           tableName: ${self:custom.accountTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbReviewTable
+        description: ThtDynamodbReviewTable
+        config:
+          tableName: ${self:custom.reviewTable}
           serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
 
 
@@ -92,4 +123,6 @@ resources:
                   Resource:
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.accountTable}"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.accountTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}/*"
                 

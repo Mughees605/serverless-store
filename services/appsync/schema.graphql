@@ -66,14 +66,125 @@ input UpdateAccountInput {
 	wheat: Boolean
 }
 
+input CreateReviewInput {
+	storeId: ID!
+	accountId: ID!
+	itemIds: [ID]
+	ratings: [ID]
+	speed: Int
+	service: Int
+	text: String
+}
+
+input DeleteReviewInput {
+	storeId: ID!
+	accountId: ID!
+}
+ 
+ 
+input TableBooleanFilterInput {
+	ne: Boolean
+	eq: Boolean
+}
+
+input TableFloatFilterInput {
+	ne: Float
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	contains: Float
+	notContains: Float
+	between: [Float]
+}
+
+input TableIDFilterInput {
+	ne: ID
+	eq: ID
+	le: ID
+	lt: ID
+	ge: ID
+	gt: ID
+	contains: ID
+	notContains: ID
+	between: [ID]
+	beginsWith: ID
+}
+
+input TableIntFilterInput {
+	ne: Int
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	contains: Int
+	notContains: Int
+	between: [Int]
+}
+
+input TableReviewFilterInput {
+	storeId: TableIDFilterInput
+	accountId: TableIDFilterInput
+	itemIds: TableIDFilterInput
+	ratings: TableIDFilterInput
+	speed: TableIntFilterInput
+	service: TableIntFilterInput
+	text: TableStringFilterInput
+}
+
+input TableStringFilterInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
+
+input UpdateReviewInput {
+	storeId: ID!
+	accountId: ID!
+	itemIds: [ID]
+	ratings: [ID]
+	speed: Int
+	service: Int
+	text: String
+}
 type Query {
     getAccount(id:ID!): Account
     allAccounts: [Account]
+	getReview(storeId: ID!, accountId: ID!): review
+	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
 }
 type Mutation {
     addAccount(input:CreateAccountInput!): Account
     updateAccount(input: UpdateAccountInput!): Account
 	deleteAccount(input: DeleteAccountInput!): Account
+	createReview(input: CreateReviewInput!): review
+	updateReview(input: UpdateReviewInput!): review
+	deleteReview(input: DeleteReviewInput!): review
+}
+
+type review {
+	storeId: ID
+	accountId: ID
+	itemIds: [Int],
+	ratings: [Int],
+	speed: Int,
+	service: Int,
+	text: String,	
+}
+
+
+type reviewConnection {
+	items: [review]
+	nextToken: String
 }
 
 

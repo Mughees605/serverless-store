@@ -6,6 +6,8 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locall
   accountTable: account-${self:custom.stage}
+  reviewTable: review-${self:custom.stage}
+
 provider:
   name: aws
   stage: dev
@@ -14,7 +16,7 @@ provider:
 
 resources:
   Resources:
-    OrderTable:
+    AccountTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.accountTable}
@@ -24,6 +26,36 @@ resources:
         KeySchema:
           - AttributeName: accountId
             KeyType: HASH
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        # GlobalSecondaryIndexes:
+        #   -
+        #     IndexName: "route_id-index"
+        #     KeySchema:
+        #       -
+        #         AttributeName: "route_id" 
+        #         KeyType: "HASH"
+        #     Projection:
+        #       ProjectionType: "ALL"
+        #     ProvisionedThroughput:
+        #       ReadCapacityUnits: 5
+        #       WriteCapacityUnits: 5
+    ReviewTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.accountTable}
+        AttributeDefinitions:
+          - AttributeName: storeId 
+            AttributeType: S
+  
+          - AttributeName: accountId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: storeId
+            KeyType: HASH
+          - AttributeName: accountId
+            KeyType: RANGE
         ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
