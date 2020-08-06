@@ -7,6 +7,7 @@ custom:
   # Set the table name here so we can use it while testing locall
   accountTable: account-${self:custom.stage}
   reviewTable: review-${self:custom.stage}
+  favoriteTable: favorite-${self:custom.stage}
 
 provider:
   name: aws
@@ -55,6 +56,35 @@ resources:
           - AttributeName: accountId
             KeyType: HASH
           - AttributeName: reviewAt
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        GlobalSecondaryIndexes:
+          - IndexName: "storeId-index"
+            KeySchema:
+              - AttributeName: "storeId" 
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+
+    FavoriteTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.favoriteTable}
+        AttributeDefinitions:
+          - AttributeName: accountId 
+            AttributeType: S
+  
+          - AttributeName: itemId 
+            AttributeType: S
+        KeySchema:
+          - AttributeName: accountId
+            KeyType: HASH
+          - AttributeName: itemId
             KeyType: RANGE
         ProvisionedThroughput:
             ReadCapacityUnits: 5

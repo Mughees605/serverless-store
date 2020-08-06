@@ -9,6 +9,8 @@ plugins:
 custom:
   accountTable: account-${self:custom.stage}
   reviewTable: review-${self:custom.stage}
+  favoriteTable: favorite-${self:custom.stage}
+
 
   stage: ${opt:stage, self:provider.stage}
   appSync:
@@ -36,6 +38,17 @@ custom:
         dataSource:  ThtDynamodbReviewTable
         field: listReviews
         request: "listReviews-request.vtl"
+        response: "shared-response.vtl"
+
+      - type: Query 
+        dataSource:  ThtDynamodbReviewTable
+        field: getFavorite
+        request: "getFavorite-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbReviewTable
+        field: listFavorites
+        request: "listFavorites-request.vtl"
         response: "shared-response.vtl"
 
       - type: Mutation 
@@ -70,6 +83,22 @@ custom:
         request: "deleteReview-request.vtl"
         response: "shared-response.vtl"
 
+      - type: Mutation 
+        dataSource:  ThtDynamodbReviewTable
+        field: createFavorite
+        request: "createFavorite-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbReviewTable
+        field: updateFavorite
+        request: "updateFavorite-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbReviewTable
+        field: deleteFavorite
+        request: "deleteFavorite-request.vtl"
+        response: "shared-response.vtl"
+
     serviceRole: "AppSyncServiceRole"
     dataSources:
       - type: AMAZON_DYNAMODB
@@ -83,6 +112,12 @@ custom:
         description: ThtDynamodbReviewTable
         config:
           tableName: ${self:custom.reviewTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbFavoriteTableTable
+        description: ThtDynamodbFavoriteTableTable
+        config:
+          tableName: ${self:custom.favoriteTable}
           serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
 
 
@@ -125,4 +160,6 @@ resources:
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.accountTable}/*"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.favoriteTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.favoriteTable}/*"
                 

@@ -81,7 +81,159 @@ input DeleteReviewInput {
 	accountId: ID!
 	reviewAt: AWSTimestamp!
 }
- 
+
+input UpdateReviewInput {
+	accountId: ID!
+	reviewAt: AWSTimestamp!
+	storeId: ID
+	itemIds: [ID]
+	ratings: [ID]
+	speed: Int
+	service: Int
+	text: String
+}
+
+input CreateFavoriteInput {
+	accountId: ID!
+	itemId: ID!
+	storeId: ID
+}
+
+input DeleteFavoriteInput {
+	accountId: ID!
+	itemId: ID!
+}
+
+input UpdateFavoriteInput {
+	accountId: ID!
+	itemId: ID!
+	storeId: ID
+}
+
+type Query {
+    getAccount(id:ID!): Account
+    allAccounts: [Account]
+	getReview(accountId: ID!, reviewAt: AWSTimestamp!): review
+	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
+	getFavorite(accountId: ID!, itemId: ID!): favorite
+	listFavorites(filter: TableFavoriteFilterInput, limit: Int, nextToken: String): favoriteConnection
+}
+type Mutation {
+    addAccount(input:CreateAccountInput!): Account
+    updateAccount(input: UpdateAccountInput!): Account
+	deleteAccount(input: DeleteAccountInput!): Account
+	createReview(input: CreateReviewInput!): review
+	updateReview(input: UpdateReviewInput!): review
+	deleteReview(input: DeleteReviewInput!): review
+	createFavorite(input: CreateFavoriteInput!): favorite
+	updateFavorite(input: UpdateFavoriteInput!): favorite
+	deleteFavorite(input: DeleteFavoriteInput!): favorite
+}
+
+type review {
+	accountId: ID
+	reviewAt: AWSTimestamp
+	storeId: ID
+	itemIds: [ID],
+	ratings: [ID],
+	speed: Int,
+	service: Int,
+	text: String,	
+}
+
+type favorite {
+  accountId: ID
+  itemId: ID
+  item: Item
+  storeId: ID
+  store: Store
+}
+
+type favoriteConnection {
+	items: [favorite]
+	nextToken: String
+}
+
+type reviewConnection {
+	items: [review]
+	nextToken: String
+}
+
+
+type Account {
+	accountId: ID
+	campaign: String
+	city: String
+	country: String
+	createdAt: String
+	crustacean: String
+	dairy: String
+	deviceId: String
+	diabetic: Boolean
+	egg: Boolean
+	email: String
+	firstName: String
+	fish: Boolean
+	gluten: Boolean
+	halal: Boolean
+	kosher: String
+	lastName: String
+	medium: String
+	peanuts: Boolean
+	phone: String
+	referrer: String
+	source: String
+	soy: Boolean
+	treeNuts: Boolean
+	vegetarian: Boolean
+	vegan: Boolean
+	wheat: Boolean
+}
+
+type Item {
+  active: Boolean
+  category: String
+  detail: String
+  img: String
+  itemId: ID!
+  itemName: String
+  optionSet: [optionSet]
+  price: Float
+  rating: Float
+  ratingCount: Int
+  tags: [String]
+}
+
+
+type Store {
+  storeId: ID
+  accountId: ID
+  associates: [Account]
+  phone: String
+  storeName: String
+  password: String
+  createdAt: String
+  updatedAt: String
+  zipCode: String
+  latitude: Float
+  longitude: Float
+  minDrinkingAge: Int
+  maxGuestTime: Int
+  tags: [String]
+  rating: Float
+  ratingCount: Int
+  items: [item]
+  open: Boolean
+  active: Boolean
+  reviews: [review]
+#   reservations: [reservation]
+#   tables: [table]
+#   orders: [order]
+}
+
+
+
+
 input TableBooleanFilterInput {
 	ne: Boolean
 	eq: Boolean
@@ -148,87 +300,8 @@ input TableStringFilterInput {
 	beginsWith: String
 }
 
-input UpdateReviewInput {
-	accountId: ID!
-	reviewAt: AWSTimestamp!
-	storeId: ID
-	itemIds: [ID]
-	ratings: [ID]
-	speed: Int
-	service: Int
-	text: String
+input TableFavoriteFilterInput {
+	accountId: TableIDFilterInput
+	itemId: TableIDFilterInput
+	storeId: TableIDFilterInput
 }
-
-type Query {
-    getAccount(id:ID!): Account
-    allAccounts: [Account]
-	getReview(accountId: ID!, reviewAt: AWSTimestamp!): review
-	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
-}
-type Mutation {
-    addAccount(input:CreateAccountInput!): Account
-    updateAccount(input: UpdateAccountInput!): Account
-	deleteAccount(input: DeleteAccountInput!): Account
-	createReview(input: CreateReviewInput!): review
-	updateReview(input: UpdateReviewInput!): review
-	deleteReview(input: DeleteReviewInput!): review
-}
-
-type review {
-	accountId: ID
-	reviewAt: AWSTimestamp
-	storeId: ID
-	itemIds: [ID],
-	ratings: [ID],
-	speed: Int,
-	service: Int,
-	text: String,	
-}
-
-type favorite {
-  accountId: ID
-  itemId: ID
-  itemName: String
-  storeId: ID
-}
-
-
-type reviewConnection {
-	items: [review]
-	nextToken: String
-}
-
-
-type Account {
-	accountId: ID
-	campaign: String
-	city: String
-	country: String
-	createdAt: String
-	crustacean: String
-	dairy: String
-	deviceId: String
-	diabetic: Boolean
-	egg: Boolean
-	email: String
-	firstName: String
-	fish: Boolean
-	gluten: Boolean
-	halal: Boolean
-	kosher: String
-	lastName: String
-	medium: String
-	peanuts: Boolean
-	phone: String
-	referrer: String
-	source: String
-	soy: Boolean
-	treeNuts: Boolean
-	vegetarian: Boolean
-	vegan: Boolean
-	wheat: Boolean
-}
-
-
-
-
