@@ -59,7 +59,7 @@ provider:
   name: aws
   stage: dev
   region:  us-east-1
-  profile: demo
+  profile: cloud_user
 
 resources:
   Resources:

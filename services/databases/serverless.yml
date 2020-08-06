@@ -10,7 +10,7 @@ provider:
   name: aws
   stage: dev
   region: us-east-1
-  profile: 
+  profile: cloud_user
 
 resources:
   Resources:
@@ -22,7 +22,7 @@ resources:
           - AttributeName: accountId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: accountId
             KeyType: HASH
         ProvisionedThroughput:
             ReadCapacityUnits: 5
