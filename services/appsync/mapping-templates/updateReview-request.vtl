@@ -2,8 +2,8 @@
   "version": "2017-02-28",
   "operation": "UpdateItem",
   "key": {
-    "storeId": $util.dynamodb.toDynamoDBJson($ctx.args.input.storeId),
     "accountId": $util.dynamodb.toDynamoDBJson($ctx.args.input.accountId),
+    "reviewAt": $util.dynamodb.toDynamoDBJson($ctx.args.input.reviewAt),
   },
 
   ## Set up some space to keep track of things we're updating **
@@ -14,7 +14,7 @@
   #set( $expRemove = [] )
 
   ## Iterate through each argument, skipping keys **
-  #foreach( $entry in $util.map.copyAndRemoveAllKeys($ctx.args.input, ["storeId", "accountId"]).entrySet() )
+  #foreach( $entry in $util.map.copyAndRemoveAllKeys($ctx.args.input, ["accountId", "reviewAt"]).entrySet() )
     #if( $util.isNull($entry.value) )
       ## If the argument is set to "null", then remove that attribute from the item in DynamoDB **
 
@@ -76,10 +76,10 @@
   },
 
   "condition": {
-    "expression": "attribute_exists(#storeId) AND attribute_exists(#accountId)",
+    "expression": "attribute_exists(#accountId) AND attribute_exists(#reviewAt)",
     "expressionNames": {
-      "#storeId": "storeId",
       "#accountId": "accountId",
+      "#reviewAt": "reviewAt",
     },
   }
 }

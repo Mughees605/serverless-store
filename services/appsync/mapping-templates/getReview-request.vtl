@@ -2,7 +2,7 @@
   "version": "2017-02-28",
   "operation": "GetItem",
   "key": {
-    "storeId": $util.dynamodb.toDynamoDBJson($ctx.args.storeId),
     "accountId": $util.dynamodb.toDynamoDBJson($ctx.args.accountId),
+    "reviewAt": $util.dynamodb.toDynamoDBJson($ctx.args.reviewAt),
   },
 }

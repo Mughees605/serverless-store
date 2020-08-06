@@ -67,8 +67,9 @@ input UpdateAccountInput {
 }
 
 input CreateReviewInput {
-	storeId: ID!
 	accountId: ID!
+	reviewAt: AWSTimestamp!
+	storeId: ID
 	itemIds: [ID]
 	ratings: [ID]
 	speed: Int
@@ -77,10 +78,9 @@ input CreateReviewInput {
 }
 
 input DeleteReviewInput {
-	storeId: ID!
 	accountId: ID!
+	reviewAt: AWSTimestamp!
 }
- 
  
 input TableBooleanFilterInput {
 	ne: Boolean
@@ -125,8 +125,9 @@ input TableIntFilterInput {
 }
 
 input TableReviewFilterInput {
-	storeId: TableIDFilterInput
 	accountId: TableIDFilterInput
+	reviewAt: TableIntFilterInput
+	storeId: TableIDFilterInput
 	itemIds: TableIDFilterInput
 	ratings: TableIDFilterInput
 	speed: TableIntFilterInput
@@ -148,18 +149,20 @@ input TableStringFilterInput {
 }
 
 input UpdateReviewInput {
-	storeId: ID!
 	accountId: ID!
+	reviewAt: AWSTimestamp!
+	storeId: ID
 	itemIds: [ID]
 	ratings: [ID]
 	speed: Int
 	service: Int
 	text: String
 }
+
 type Query {
     getAccount(id:ID!): Account
     allAccounts: [Account]
-	getReview(storeId: ID!, accountId: ID!): review
+	getReview(accountId: ID!, reviewAt: AWSTimestamp!): review
 	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
 }
 type Mutation {
@@ -172,13 +175,21 @@ type Mutation {
 }
 
 type review {
-	storeId: ID
 	accountId: ID
-	itemIds: [Int],
-	ratings: [Int],
+	reviewAt: AWSTimestamp
+	storeId: ID
+	itemIds: [ID],
+	ratings: [ID],
 	speed: Int,
 	service: Int,
 	text: String,	
+}
+
+type favorite {
+  accountId: ID
+  itemId: ID
+  itemName: String
+  storeId: ID
 }
 
 

@@ -46,28 +46,26 @@ resources:
       Properties:
         TableName: ${self:custom.accountTable}
         AttributeDefinitions:
-          - AttributeName: storeId 
+          - AttributeName: accountId 
             AttributeType: S
   
-          - AttributeName: accountId
-            AttributeType: S
+          - AttributeName: reviewAt 
+            AttributeType: N
         KeySchema:
-          - AttributeName: storeId
-            KeyType: HASH
           - AttributeName: accountId
+            KeyType: HASH
+          - AttributeName: reviewAt
             KeyType: RANGE
         ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
-        # GlobalSecondaryIndexes:
-        #   -
-        #     IndexName: "route_id-index"
-        #     KeySchema:
-        #       -
-        #         AttributeName: "route_id" 
-        #         KeyType: "HASH"
-        #     Projection:
-        #       ProjectionType: "ALL"
-        #     ProvisionedThroughput:
-        #       ReadCapacityUnits: 5
-        #       WriteCapacityUnits: 5
+        GlobalSecondaryIndexes:
+          - IndexName: "storeId-index"
+            KeySchema:
+              - AttributeName: "storeId" 
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5

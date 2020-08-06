@@ -2,15 +2,15 @@
   "version": "2017-02-28",
   "operation": "PutItem",
   "key": {
-    "storeId": $util.dynamodb.toDynamoDBJson($ctx.args.input.storeId),
     "accountId": $util.dynamodb.toDynamoDBJson($ctx.args.input.accountId),
+    "reviewAt": $util.dynamodb.toDynamoDBJson($ctx.args.input.reviewAt),
   },
   "attributeValues": $util.dynamodb.toMapValuesJson($ctx.args.input),
   "condition": {
-    "expression": "attribute_not_exists(#storeId) AND attribute_not_exists(#accountId)",
+    "expression": "attribute_not_exists(#accountId) AND attribute_not_exists(#reviewAt)",
     "expressionNames": {
-      "#storeId": "storeId",
       "#accountId": "accountId",
+      "#reviewAt": "reviewAt",
     },
   },
 }
