@@ -1,10 +1,7 @@
-service: database
+service: storedb
 
 custom:
-  # Our stage is based on what is passed in when running serverless
-  # commands. Or fallsback to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
-  # Set the table name here so we can use it while testing locall
   accountTable: account-${self:custom.stage}
   reviewTable: review-${self:custom.stage}
   favoriteTable: favorite-${self:custom.stage}
@@ -13,7 +10,7 @@ provider:
   name: aws
   stage: dev
   region: us-east-1
-  profile: cloud_user
+  profile: store_user
 
 resources:
   Resources:
@@ -45,21 +42,24 @@ resources:
     ReviewTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.accountTable}
+        TableName: ${self:custom.reviewTable}
         AttributeDefinitions:
           - AttributeName: accountId 
             AttributeType: S
   
           - AttributeName: reviewAt 
             AttributeType: N
+
+          - AttributeName: storeId 
+            AttributeType: S
         KeySchema:
           - AttributeName: accountId
             KeyType: HASH
           - AttributeName: reviewAt
             KeyType: RANGE
         ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
+            ReadCapacityUnits: 6
+            WriteCapacityUnits: 6
         GlobalSecondaryIndexes:
           - IndexName: "storeId-index"
             KeySchema:
@@ -81,14 +81,17 @@ resources:
   
           - AttributeName: itemId 
             AttributeType: S
+
+          - AttributeName: storeId 
+            AttributeType: S
         KeySchema:
           - AttributeName: accountId
             KeyType: HASH
           - AttributeName: itemId
             KeyType: RANGE
         ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
+            ReadCapacityUnits: 6
+            WriteCapacityUnits: 6
         GlobalSecondaryIndexes:
           - IndexName: "storeId-index"
             KeySchema:

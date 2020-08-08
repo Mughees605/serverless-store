@@ -3,23 +3,22 @@ schema {
     mutation: Mutation
 }
 input CreateAccountInput {
-	accountId: ID!
+	accountId: ID
 	campaign: String
-	city: String
+	city: String!
 	country: String
-	createdAt: String
 	crustacean: String
 	dairy: String
 	deviceId: String
 	diabetic: Boolean
 	egg: Boolean
-	email: String
-	firstName: String
+	email: String!
+	firstName: String!
 	fish: Boolean
 	gluten: Boolean
 	halal: Boolean
 	kosher: String
-	lastName: String
+	lastName: String!
 	medium: String
 	peanuts: Boolean
 	phone: String
@@ -41,7 +40,6 @@ input UpdateAccountInput {
 	campaign: String
 	city: String
 	country: String
-	createdAt: String
 	crustacean: String
 	dairy: String
 	deviceId: String
@@ -68,8 +66,7 @@ input UpdateAccountInput {
 
 input CreateReviewInput {
 	accountId: ID!
-	reviewAt: AWSTimestamp!
-	storeId: ID
+	storeId: ID!
 	itemIds: [ID]
 	ratings: [ID]
 	speed: Int
@@ -147,6 +144,8 @@ type favorite {
   item: Item
   storeId: ID
   store: Store
+	createdAt: String
+	updatedAt: String
 }
 
 type favoriteConnection {
@@ -166,6 +165,7 @@ type Account {
 	city: String
 	country: String
 	createdAt: String
+	updatedAt: String
 	crustacean: String
 	dairy: String
 	deviceId: String
@@ -197,7 +197,7 @@ type Item {
   img: String
   itemId: ID!
   itemName: String
-  optionSet: [optionSet]
+  # optionSet: [optionSet]
   price: Float
   rating: Float
   ratingCount: Int
@@ -222,7 +222,7 @@ type Store {
   tags: [String]
   rating: Float
   ratingCount: Int
-  items: [item]
+  items: [Item]
   open: Boolean
   active: Boolean
   reviews: [review]

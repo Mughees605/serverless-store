@@ -84,17 +84,17 @@ custom:
         response: "shared-response.vtl"
 
       - type: Mutation 
-        dataSource:  ThtDynamodbReviewTable
+        dataSource:  ThtDynamodbFavoriteTableTable
         field: createFavorite
         request: "createFavorite-request.vtl"
         response: "shared-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbReviewTable
+        dataSource:  ThtDynamodbFavoriteTableTable
         field: updateFavorite
         request: "updateFavorite-request.vtl"
         response: "shared-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbReviewTable
+        dataSource:  ThtDynamodbFavoriteTableTable
         field: deleteFavorite
         request: "deleteFavorite-request.vtl"
         response: "shared-response.vtl"
@@ -125,7 +125,7 @@ provider:
   name: aws
   stage: dev
   region:  us-east-1
-  profile: cloud_user
+  profile: store_user
 
 resources:
   Resources:
