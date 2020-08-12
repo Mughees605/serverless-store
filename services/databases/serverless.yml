@@ -5,6 +5,8 @@ custom:
   accountTable: account-${self:custom.stage}
   reviewTable: review-${self:custom.stage}
   favoriteTable: favorite-${self:custom.stage}
+  storeTable: store-${self:custom.stage}
+  itemTable: item-${self:custom.stage}
 
 provider:
   name: aws
@@ -102,3 +104,41 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5
+
+    StoreTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.storeTable}
+        AttributeDefinitions:
+          - AttributeName: accountId 
+            AttributeType: S
+  
+          - AttributeName: storeId 
+            AttributeType: S
+        KeySchema:
+          - AttributeName: accountId
+            KeyType: HASH
+          - AttributeName: storeId
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+  
+    ItemTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.itemTable}
+        AttributeDefinitions:
+          - AttributeName: storeId 
+            AttributeType: S
+  
+          - AttributeName: itemId 
+            AttributeType: S
+        KeySchema:
+          - AttributeName: storeId
+            KeyType: HASH
+          - AttributeName: itemId
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
