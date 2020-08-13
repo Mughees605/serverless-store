@@ -50,6 +50,31 @@ custom:
         field: listFavorites
         request: "listFavorites-request.vtl"
         response: "shared-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbStoreTable
+        field: getStore
+        request: "getStore-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbStoreTable
+        field: listStores
+        request: "listStore-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbItemTable
+        field: getItem
+        request: "getItem-request.vtl"
+        response: "getItem-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbItemTable
+        field: listItems
+        request: "listItem-request.vtl"
+        response: "shared-response.vtl"
+      - type: Store 
+        dataSource:  ThtDynamodbItemTable
+        field: items
+        request: "Store.items-request.vtl"
+        response: "shared-response.vtl"
 
       - type: Mutation 
         dataSource:  ThtDynamodbAccountTable
@@ -98,7 +123,36 @@ custom:
         field: deleteFavorite
         request: "deleteFavorite-request.vtl"
         response: "shared-response.vtl"
-
+      - type: Mutation 
+        dataSource:  ThtDynamodbStoreTable
+        field: createStore
+        request: "addStore-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbStoreTable
+        field: updateStore
+        request: "updateStore-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbStoreTable
+        field: deleteStore
+        request: "deleteStore-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbStoreTable
+        field: createItem
+        request: "createItem-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbStoreTable
+        field: updateItem
+        request: "updateItem-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbStoreTable
+        field:   deleteItem
+        request: "deleteItem-request.vtl"
+        response: "shared-response.vtl"
     serviceRole: "AppSyncServiceRole"
     dataSources:
       - type: AMAZON_DYNAMODB
@@ -122,6 +176,7 @@ custom:
 
 
 provider:
+
   name: aws
   stage: dev
   region:  us-east-1

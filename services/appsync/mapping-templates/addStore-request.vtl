@@ -1,0 +1,16 @@
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": {
+    "accountId": $util.dynamodb.toDynamoDBJson($ctx.args.input.accountId),
+    "storeId": $util.dynamodb.toDynamoDBJson($ctx.args.input.storeId),
+  },
+  "attributeValues": $util.dynamodb.toMapValuesJson($ctx.args.input),
+  "condition": {
+    "expression": "attribute_not_exists(#accountId) AND attribute_not_exists(#storeId)",
+    "expressionNames": {
+      "#accountId": "accountId",
+      "#storeId": "storeId",
+    },
+  },
+}

@@ -107,6 +107,138 @@ input UpdateFavoriteInput {
 	storeId: ID
 }
 
+
+#store
+input TableStoreFilterInput {
+	storeId: TableIDFilterInput
+	accountId: TableIDFilterInput
+	phone: TableStringFilterInput
+	storeName: TableStringFilterInput
+	password: TableStringFilterInput
+	createdAt: TableStringFilterInput
+	updatedAt: TableStringFilterInput
+	zipCode: TableStringFilterInput
+	latitude: TableFloatFilterInput
+	longitude: TableFloatFilterInput
+	minDrinkingAge: TableIntFilterInput
+	maxGuestTime: TableIntFilterInput
+	tags: TableStringFilterInput
+	rating: TableFloatFilterInput
+	ratingCount: TableIntFilterInput
+	open: TableBooleanFilterInput
+	active: TableBooleanFilterInput
+	reviews: TableStringFilterInput
+}
+
+input CreateStoreInput {
+	storeId: ID!
+	accountId: ID!
+	associates: [AWSJSON]
+	phone: String
+	storeName: String
+	password: String
+	createdAt: String
+	updatedAt: String
+	zipCode: String
+	latitude: Float
+	longitude: Float
+	minDrinkingAge: Int
+	maxGuestTime: Int
+	tags: [String]
+	rating: Float
+	ratingCount: Int
+	open: Boolean
+	active: Boolean
+	reviews: [String]
+	items: [AWSJSON]
+	reservations: [AWSJSON]
+	tables: [AWSJSON]
+	orders: [AWSJSON]
+}
+
+input DeleteStoreInput {
+	storeId: ID!
+	accountId: ID!
+}
+input UpdateStoreInput {
+	storeId: ID!
+	accountId: ID!
+	associates: [AWSJSON]
+	phone: String
+	storeName: String
+	password: String
+	createdAt: String
+	updatedAt: String
+	zipCode: String
+	latitude: Float
+	longitude: Float
+	minDrinkingAge: Int
+	maxGuestTime: Int
+	tags: [String]
+	rating: Float
+	ratingCount: Int
+	open: Boolean
+	active: Boolean
+	reviews: [String]
+	items: [AWSJSON]
+	reservations: [AWSJSON]
+	tables: [AWSJSON]
+	orders: [AWSJSON]
+}
+
+#item input
+
+input TableItemFilterInput {
+	storeId: TableIDFilterInput
+	itemId: TableIDFilterInput
+	active: TableBooleanFilterInput
+	category: TableStringFilterInput
+	detail: TableStringFilterInput
+	img: TableStringFilterInput
+	itemName: TableStringFilterInput
+	price: TableFloatFilterInput
+	rating: TableFloatFilterInput
+	ratingCount: TableIntFilterInput
+	tags: TableStringFilterInput
+}
+
+input CreateItemInput {
+	storeId: ID!
+	itemId: ID!
+	active: Boolean
+	category: String
+	detail: String
+	img: String
+	itemName: String
+	optionSet: AWSJSON
+	price: Float
+	rating: Float
+	ratingCount: Int
+	tags: [String]
+}
+
+input DeleteItemInput {
+	storeId: ID!
+	itemId: ID!
+}
+
+
+input UpdateItemInput {
+	storeId: ID!
+	itemId: ID!
+	active: Boolean
+	category: String
+	detail: String
+	img: String
+	itemName: String
+	optionSet: AWSJSON
+	price: Float
+	rating: Float
+	ratingCount: Int
+	tags: [String]
+} 
+
+
 type Query {
     getAccount(id:ID!): Account
     allAccounts: [Account]
@@ -114,6 +246,14 @@ type Query {
 	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
 	getFavorite(accountId: ID!, itemId: ID!): favorite
 	listFavorites(filter: TableFavoriteFilterInput, limit: Int, nextToken: String): favoriteConnection
+
+	#store
+	getStore(accountId: ID!, storeId: ID!): store
+	listStores(filter: TableStoreFilterInput, limit: Int, nextToken: String): storeConnection
+
+	#item
+    getItem(storeId: ID!, itemId: ID!): Item
+	listItems(filter: TableItemFilterInput, limit: Int, nextToken: String): ItemConnection
 }
 type Mutation {
     addAccount(input:CreateAccountInput!): Account
@@ -125,6 +265,16 @@ type Mutation {
 	createFavorite(input: CreateFavoriteInput!): favorite
 	updateFavorite(input: UpdateFavoriteInput!): favorite
 	deleteFavorite(input: DeleteFavoriteInput!): favorite
+
+	#store
+	createStore(input: CreateStoreInput!): store
+	updateStore(input: UpdateStoreInput!): store
+	deleteStore(input: DeleteStoreInput!): store
+	
+	#item
+	createItem(input: CreateItemInput!): Item
+	updateItem(input: UpdateItemInput!): Item
+	deleteItem(input: DeleteItemInput!): Item
 }
 
 type review {
@@ -204,6 +354,11 @@ type Item {
   tags: [String]
 }
 
+type ItemConnection {
+	items: [Item]
+	nextToken: String
+}
+
 
 type Store {
   storeId: ID
@@ -231,6 +386,11 @@ type Store {
 #   orders: [order]
 }
 
+
+type storeConnection {
+	items: [store]
+	nextToken: String
+}
 
 
 
