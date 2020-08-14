@@ -246,7 +246,7 @@ type Query {
 	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
 	getFavorite(accountId: ID!, itemId: ID!): favorite
 	listFavorites(filter: TableFavoriteFilterInput, limit: Int, nextToken: String): favoriteConnection
-
+ 
 	#store
 	getStore(accountId: ID!, storeId: ID!): store
 	listStores(filter: TableStoreFilterInput, limit: Int, nextToken: String): storeConnection
