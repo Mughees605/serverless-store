@@ -1,3 +1,7 @@
+$util.qr($context.args.input.put("itemId", $util.defaultIfNull($ctx.args.input.itemId, $util.autoId())))
+$util.qr($context.args.input.put("createdAt", $util.defaultIfNull($ctx.args.input.createdAt, $util.time.nowISO8601())))
+$util.qr($context.args.input.put("updatedAt", $util.defaultIfNull($ctx.args.input.updatedAt, $util.time.nowISO8601())))
+
 {
   "version": "2017-02-28",
   "operation": "PutItem",
