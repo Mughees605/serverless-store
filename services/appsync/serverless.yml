@@ -10,6 +10,8 @@ custom:
   accountTable: account-${self:custom.stage}
   reviewTable: review-${self:custom.stage}
   favoriteTable: favorite-${self:custom.stage}
+  storeTable: store-${self:custom.stage}
+  itemTable: item-${self:custom.stage}
 
 
   stage: ${opt:stage, self:provider.stage}
@@ -60,21 +62,29 @@ custom:
         field: listStores
         request: "listStore-request.vtl"
         response: "shared-response.vtl"
+
       - type: Query 
-        dataSource:  ThtDynamodbItemTable
+        dataSource: ThtDynamodbItemTable
         field: getItem
         request: "getItem-request.vtl"
         response: "shared-response.vtl"
       - type: Query 
-        dataSource:  ThtDynamodbItemTable
+        dataSource: ThtDynamodbItemTable
         field: listItems
         request: "getItem-request.vtl"
         response: "shared-response.vtl"
       - type: store 
         dataSource:  ThtDynamodbItemTable
         field: items
-        request: "store.items-request.vtl"
-        response: "shared-response.vtl"
+        request: "Store.items-request.vtl"
+        response: "Store.items-response.vtl"
+      - type: store 
+        dataSource:  ThtDynamodbReviewTable
+        field: reviews
+        request: "Store.reviews-request.vtl"
+        response: "Store.reviews-response.vtl"
+
+####################MUTATIONS###########################
 
       - type: Mutation 
         dataSource:  ThtDynamodbAccountTable
@@ -123,6 +133,7 @@ custom:
         field: deleteFavorite
         request: "deleteFavorite-request.vtl"
         response: "shared-response.vtl"
+
       - type: Mutation 
         dataSource:  ThtDynamodbStoreTable
         field: createStore
@@ -138,21 +149,23 @@ custom:
         field: deleteStore
         request: "deleteStore-request.vtl"
         response: "shared-response.vtl"
+
       - type: Mutation 
-        dataSource:  ThtDynamodbStoreTable
+        dataSource:  ThtDynamodbItemTable
         field: createItem
         request: "createItem-request.vtl"
         response: "shared-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbStoreTable
+        dataSource:  ThtDynamodbItemTable
         field: updateItem
         request: "updateItem-request.vtl"
         response: "shared-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbStoreTable
+        dataSource:  ThtDynamodbItemTable
         field:   deleteItem
         request: "deleteItem-request.vtl"
         response: "shared-response.vtl"
+
     serviceRole: "AppSyncServiceRole"
     dataSources:
       - type: AMAZON_DYNAMODB
@@ -173,12 +186,22 @@ custom:
         config:
           tableName: ${self:custom.favoriteTable}
           serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbStoreTable
+        description: ThtDynamodbStoreTable
+        config:
+          tableName: ${self:custom.storeTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbItemTable
+        description: ThtDynamodbItemTable
+        config:
+          tableName: ${self:custom.itemTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
 
 
 provider:
-
   name: aws
-  stage: dev
   region:  us-east-1
   profile: store_user
 
@@ -217,8 +240,8 @@ resources:
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}/*"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.favoriteTable}"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.favoriteTable}/*"
-                     
-
-
-
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.storeTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.storeTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.itemTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.itemTable}/*"
                 

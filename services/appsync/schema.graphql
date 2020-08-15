@@ -131,14 +131,11 @@ input TableStoreFilterInput {
 }
 
 input CreateStoreInput {
-	storeId: ID!
 	accountId: ID!
 	associates: [AWSJSON]
 	phone: String
 	storeName: String
 	password: String
-	createdAt: String
-	updatedAt: String
 	zipCode: String
 	latitude: Float
 	longitude: Float
@@ -204,7 +201,6 @@ input TableItemFilterInput {
 
 input CreateItemInput {
 	storeId: ID!
-	itemId: ID!
 	active: Boolean
 	category: String
 	detail: String
@@ -246,12 +242,8 @@ type Query {
 	listReviews(filter: TableReviewFilterInput, limit: Int, nextToken: String): reviewConnection
 	getFavorite(accountId: ID!, itemId: ID!): favorite
 	listFavorites(filter: TableFavoriteFilterInput, limit: Int, nextToken: String): favoriteConnection
- 
-	#store
 	getStore(accountId: ID!, storeId: ID!): store
 	listStores(filter: TableStoreFilterInput, limit: Int, nextToken: String): storeConnection
-
-	#item
     getItem(storeId: ID!, itemId: ID!): Item
 	listItems(filter: TableItemFilterInput, limit: Int, nextToken: String): ItemConnection
 }
@@ -265,13 +257,9 @@ type Mutation {
 	createFavorite(input: CreateFavoriteInput!): favorite
 	updateFavorite(input: UpdateFavoriteInput!): favorite
 	deleteFavorite(input: DeleteFavoriteInput!): favorite
-
-	#store
 	createStore(input: CreateStoreInput!): store
 	updateStore(input: UpdateStoreInput!): store
 	deleteStore(input: DeleteStoreInput!): store
-	
-	#item
 	createItem(input: CreateItemInput!): Item
 	updateItem(input: UpdateItemInput!): Item
 	deleteItem(input: DeleteItemInput!): Item
@@ -293,7 +281,7 @@ type favorite {
   itemId: ID
   item: Item
   storeId: ID
-  store: Store
+  store: store
 	createdAt: String
 	updatedAt: String
 }
@@ -341,11 +329,14 @@ type Account {
 }
 
 type Item {
+	storeId: ID!
+  itemId: ID!
+	createdAt: String
+	updatedAt: String
   active: Boolean
   category: String
   detail: String
   img: String
-  itemId: ID!
   itemName: String
   # optionSet: [optionSet]
   price: Float
