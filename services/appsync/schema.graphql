@@ -360,7 +360,7 @@ type ItemConnection {
 }
 
 
-type Store {
+type store {
   storeId: ID
   accountId: ID
   associates: [Account]

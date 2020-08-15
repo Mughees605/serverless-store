@@ -64,16 +64,16 @@ custom:
         dataSource:  ThtDynamodbItemTable
         field: getItem
         request: "getItem-request.vtl"
-        response: "getItem-response.vtl"
+        response: "shared-response.vtl"
       - type: Query 
         dataSource:  ThtDynamodbItemTable
         field: listItems
-        request: "listItem-request.vtl"
+        request: "getItem-request.vtl"
         response: "shared-response.vtl"
-      - type: Store 
+      - type: store 
         dataSource:  ThtDynamodbItemTable
         field: items
-        request: "Store.items-request.vtl"
+        request: "store.items-request.vtl"
         response: "shared-response.vtl"
 
       - type: Mutation 
@@ -217,4 +217,8 @@ resources:
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}/*"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.favoriteTable}"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.favoriteTable}/*"
+                     
+
+
+
                 
