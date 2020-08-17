@@ -12,7 +12,9 @@ custom:
   favoriteTable: favorite-${self:custom.stage}
   storeTable: store-${self:custom.stage}
   itemTable: item-${self:custom.stage}
-
+  orderTable: item-${self:custom.stage}
+  # reservationTable: item-${self:custom.stage}
+  
 
   stage: ${opt:stage, self:provider.stage}
   appSync:
@@ -83,7 +85,36 @@ custom:
         field: reviews
         request: "Store.reviews-request.vtl"
         response: "Store.reviews-response.vtl"
-
+      - type: Query 
+        dataSource: ThtDynamodbOrderTable
+        field: getOrder
+        request: "getOrder-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource: ThtDynamodbOrderTable
+        field: listOrder
+        request: "listOrder-request.vtl"
+        response: "shared-response.vtl"
+      # - type: Query 
+      #   dataSource: ThtDynamodbReservationTable
+      #   field: getReservation
+      #   request: "getReservation-request.vtl"
+      #   response: "shared-response.vtl"
+      # - type: Query 
+      #   dataSource: ThtDynamodbReservationTable
+      #   field: listReservation
+      #   request: "listReservation-request.vtl"
+      #   response: "shared-response.vtl"
+      - type: store 
+        dataSource:  ThtDynamodbOrderTable
+        field: orders
+        request: "Store.orders-request.vtl"
+        response: "Store.orders-response.vtl"
+      # - type: store 
+      #   dataSource:  ThtDynamodbOrderTable
+      #   field: reservation
+      #   request: "Store.reservation-request.vtl"
+      #   response: "Store.reservation-response.vtl"
 ####################MUTATIONS###########################
 
       - type: Mutation 
@@ -165,6 +196,22 @@ custom:
         field:   deleteItem
         request: "deleteItem-request.vtl"
         response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbOrderTable
+        field: createOrder
+        request: "createOrder-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbOrderTable
+        field: updateOrder
+        request: "updateOrder-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbOrderTable
+        field:   deleteOrder
+        request: "deleteOrder-request.vtl"
+        response: "shared-response.vtl"
+    
 
     serviceRole: "AppSyncServiceRole"
     dataSources:
@@ -198,7 +245,18 @@ custom:
         config:
           tableName: ${self:custom.itemTable}
           serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] } 
-
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbOrderTable
+        description: ThtDynamodbOrderTable
+        config:
+          tableName: ${self:custom.orderTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] }
+      # - type: AMAZON_DYNAMODB
+      #   name: ThtDynamodbReservationTable
+      #   description: ThtDynamodbReservationTable
+      #   config:
+      #     tableName: ${self:custom.reservationTable}
+      #     serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] }  
 
 provider:
   name: aws

@@ -148,7 +148,7 @@ input CreateStoreInput {
 	active: Boolean
 	reviews: [String]
 	items: [AWSJSON]
-	reservations: [AWSJSON]
+	# reservations: [AWSJSON]
 	tables: [AWSJSON]
 	orders: [AWSJSON]
 }
@@ -178,7 +178,7 @@ input UpdateStoreInput {
 	active: Boolean
 	reviews: [String]
 	items: [AWSJSON]
-	reservations: [AWSJSON]
+	# reservations: [AWSJSON]
 	tables: [AWSJSON]
 	orders: [AWSJSON]
 }
@@ -219,6 +219,7 @@ input DeleteItemInput {
 }
 
 
+
 input UpdateItemInput {
 	storeId: ID!
 	itemId: ID!
@@ -234,6 +235,44 @@ input UpdateItemInput {
 	tags: [String]
 } 
 
+input TableOrderFilterInput {
+	accountIds: TableIntFilterInput
+	additionalFees: TableFloatFilterInput
+	completedAt: TableStringFilterInput
+	completionAmount: TableFloatFilterInput
+	createdAt: TableStringFilterInput
+	createdFor: TableStringFilterInput
+	orderId: TableIntFilterInput
+	tableToken: TableStringFilterInput
+}
+
+input CreateOrdersInput {
+  orderId: Int!
+  accountIds: [String]
+  additionalFees: Float
+  completedAt: String
+  completionAmount: Float
+  createdAt: String
+  createdFor: String
+#   lines: [lines]
+  tableToken: String
+}
+
+input DeleteOrdersInput {
+	orderId: Int!
+}
+input UpdateOrdersInput {
+  accountIds: [String]
+  additionalFees: Float
+  completedAt: String
+  completionAmount: Float
+  createdAt: String
+  createdFor: String
+#   lines: [lines]
+  orderId: Int!
+  tableToken: String
+}
+
 
 type Query {
     getAccount(id:ID!): Account
@@ -246,6 +285,9 @@ type Query {
 	listStores(filter: TableStoreFilterInput, limit: Int, nextToken: String): storeConnection
     getItem(storeId: ID!, itemId: ID!): Item
 	listItems(filter: TableItemFilterInput, limit: Int, nextToken: String): ItemConnection
+	getOrder(orderId: Int!, createdAt: String!): order
+	listOrder(filter: TableOrderFilterInput, limit: Int, nextToken: String): orderConnection
+
 }
 type Mutation {
     addAccount(input:CreateAccountInput!): Account
@@ -263,6 +305,10 @@ type Mutation {
 	createItem(input: CreateItemInput!): Item
 	updateItem(input: UpdateItemInput!): Item
 	deleteItem(input: DeleteItemInput!): Item
+	createOrder(input: CreateOrdersInput!): order
+	updateOrder(input: UpdateOrdersInput!): order
+	deleteOrder(input: DeleteOrdersInput!): order
+	
 }
 
 type review {
@@ -374,7 +420,7 @@ type store {
   reviews: [review]
 #   reservations: [reservation]
 #   tables: [table]
-#   orders: [order]
+  orders: [order]
 }
 
 
@@ -382,6 +428,25 @@ type storeConnection {
 	items: [store]
 	nextToken: String
 }
+
+
+type order {
+	orderId: Int!
+	accountIds: [String]
+	additionalFees: Float
+	completedAt: String
+	completionAmount: Float
+	createdAt: String
+	# lines: [lines]
+	createdFor: String
+	tableToken: String
+}
+
+type orderConnection {
+	items: [order]
+	nextToken: String
+}
+
 
 
 
