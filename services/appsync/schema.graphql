@@ -281,6 +281,7 @@ input TablePaymentMethodsFilterInput {
 }
 
 input CreatePaymentMethodsInput{
+  createdAt: String
   accountId: String!
   details: String
   token: String
@@ -288,13 +289,13 @@ input CreatePaymentMethodsInput{
 }
 
 input DeletePaymentMethodsInput{
-  accountId: String!
-	createdAt: String!
+	id: ID!
 }
 
 input UpdatePaymentMethodsInput{
-  createdAt: String!
-  accountId: String!
+  id: ID!	
+  createdAt: String
+  accountId: String
   details: String
   token: String
   type: String
@@ -340,9 +341,9 @@ type Query {
 	listItems(filter: TableItemFilterInput, limit: Int, nextToken: String): ItemConnection
 	getOrder(orderId: ID!, createdAt: String!): order
 	listOrder(filter: TableOrderFilterInput, limit: Int, nextToken: String): orderConnection
-	getReservation(orderId: ID!, createdAt: String!): reservation
+	getReservation(id: ID!, storeId: String!): reservation
 	listReservation(filter: TableReservationFilterInput, limit: Int, nextToken: String): reservationConnection
-	getPaymentMethods(accountId: ID!, createdAt: String!): paymentMethod
+	getPaymentMethods(accountId:ID!,createdAt: String!): paymentMethods
 	listPaymentMethods(filter: TablePaymentMethodsFilterInput, limit: Int, nextToken: String): paymentMethodsConnection
 }
 type Mutation {
@@ -365,9 +366,9 @@ type Mutation {
 	addOrderCompletedAt(orderId: ID!, completedAt: String!): order
 	updateOrder(input: UpdateOrdersInput!): order
 	deleteOrder(input: DeleteOrdersInput!): order
-	addPaymentMethods(input:CreatePaymentMethodsInput!): paymentMethod
-	updatePaymentMethods(input:UpdatePaymentMethodsInput!): paymentMethod
-	deletePaymentMethods(input:DeletePaymentMethodsInput!): paymentMethod
+	addPaymentMethods(input:CreatePaymentMethodsInput!): paymentMethods
+	updatePaymentMethods(input:UpdatePaymentMethodsInput!): paymentMethods
+	deletePaymentMethods(input:DeletePaymentMethodsInput!): paymentMethods
 	createReservation(input: CreateReservationInput!): reservation
 	updateReservation(input: UpdateReservationInput!): reservation
 	deleteReservation(input: DeleteReservationInput!): reservation
@@ -434,7 +435,7 @@ type Account {
 	vegetarian: Boolean
 	vegan: Boolean
 	wheat: Boolean
-	paymentMethod: [paymentMethod]
+	paymentMethods: [paymentMethods]
 }
 
 type Item {
@@ -526,7 +527,8 @@ type reservationConnection{
 	nextToken: String
 }
 
-type paymentMethod {
+type paymentMethods {
+  id: ID
   createdAt: String
   accountId: String
   details: String
@@ -535,7 +537,7 @@ type paymentMethod {
 }
 
 type paymentMethodsConnection{
-	items: [paymentMethod]
+	items: [paymentMethods]
 	nextToken: String
 }
 
