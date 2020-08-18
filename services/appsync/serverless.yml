@@ -14,7 +14,8 @@ custom:
   storeTable: store-${self:custom.stage}
   itemTable: item-${self:custom.stage}
   orderTable: item-${self:custom.stage}
-  # reservationTable: item-${self:custom.stage}
+  reservationTable: item-${self:custom.stage}
+  paymentTable: item-${self:custom.stage}
   
 
   stage: ${opt:stage, self:provider.stage}
@@ -96,21 +97,36 @@ custom:
         field: listOrder
         request: "listOrder-request.vtl"
         response: "shared-response.vtl"
-      # - type: Query 
-      #   dataSource: ThtDynamodbReservationTable
-      #   field: getReservation
-      #   request: "getReservation-request.vtl"
-      #   response: "shared-response.vtl"
-      # - type: Query 
-      #   dataSource: ThtDynamodbReservationTable
-      #   field: listReservation
-      #   request: "listReservation-request.vtl"
-      #   response: "shared-response.vtl"
+      - type: Query 
+        dataSource: ThtDynamodbReservationTable
+        field: getReservation
+        request: "getReservation-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource: ThtDynamodbReservationTable
+        field: listReservation
+        request: "listReservation-request.vtl"
+        response: "shared-response.vtl"
       - type: store 
         dataSource:  ThtDynamodbOrderTable
         field: orders
         request: "Store.orders-request.vtl"
         response: "Store.orders-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbPaymentTable
+        field: getPaymentMethods
+        request: "getPaymentMethods-request.vtl"
+        response: "shared-response.vtl"
+      - type: Query 
+        dataSource:  ThtDynamodbPaymentTable
+        field: listPaymentMethods
+        request: "listPaymentMethods-request.vtl"
+        response: "shared-response.vtl"
+      - type: Account
+        dataSource:  ThtDynamodbPaymentTable
+        field: paymentMethods
+        request: "Account.paymentMethods-request.vtl"
+        response: "Account.paymentMethods-response.vtl"
       # - type: store 
       #   dataSource:  ThtDynamodbOrderTable
       #   field: reservation
@@ -217,8 +233,38 @@ custom:
         field:   deleteOrder
         request: "deleteOrder-request.vtl"
         response: "shared-response.vtl"
-    
 
+      - type: Mutation 
+        dataSource:  ThtDynamodbReservationTable
+        field: createReservation
+        request: "createReservation-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbReservationTable
+        field: updateReservation
+        request: "updateReservation-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbReservationTable
+        field:   deleteReservation
+        request: "deleteReservation-request.vtl"
+        response: "shared-response.vtl"
+
+      - type: Mutation 
+        dataSource:  ThtDynamodbPaymentTable
+        field: addPaymentMethods
+        request: "addPaymentMethods-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbPaymentTable
+        field: updatePaymentMethods
+        request: "updatePaymentMethods-request.vtl"
+        response: "shared-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtDynamodbPaymentTable
+        field: deletePaymentMethods
+        request: "deletePaymentMethods-request.vtl"
+        response: "shared-response.vtl"
     serviceRole: "AppSyncServiceRole"
     dataSources:
       - type: AMAZON_DYNAMODB
@@ -263,12 +309,18 @@ custom:
         config:
           lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
           serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
-      # - type: AMAZON_DYNAMODB
-      #   name: ThtDynamodbReservationTable
-      #   description: ThtDynamodbReservationTable
-      #   config:
-      #     tableName: ${self:custom.reservationTable}
-      #     serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] }  
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbReservationTable
+        description: ThtDynamodbReservationTable
+        config:
+          tableName: ${self:custom.reservationTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] }  
+      - type: AMAZON_DYNAMODB
+        name: ThtDynamodbPaymentTable
+        description: ThtDynamodbPaymentTable
+        config:
+          tableName: ${self:custom.paymentTable}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] }  
 
 provider:
   name: aws

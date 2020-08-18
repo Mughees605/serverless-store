@@ -273,6 +273,64 @@ input UpdateOrdersInput {
   tableToken: String
 }
 
+input TablePaymentMethodsFilterInput {
+
+  id: TableIDFilterInput
+  createdAt: TableStringFilterInput
+  accountId: TableStringFilterInput
+  details: TableStringFilterInput
+  token: TableStringFilterInput
+  type: TableStringFilterInput
+}
+
+input CreatePaymentMethodsInput{
+  createdAt: String
+  accountId: String!
+  details: String
+  token: String
+  type: String
+}
+
+input DeletePaymentMethodsInput{
+	id: ID!
+}
+
+input UpdatePaymentMethodsInput{
+  id: ID!	
+  createdAt: String
+  accountId: String
+  details: String
+  token: String
+  type: String
+}
+
+input TableReservationFilterInput{
+    id: TableIDFilterInput!
+	ownerId: TableStringFilterInput
+	storeId: TableStringFilterInput
+	reservationToken: TableStringFilterInput
+}
+input CreateReservationInput {
+	ownerId: String!
+	storeId: String
+	accounts: [AWSJSON]
+	order: AWSJSON
+	reservationToken: String
+}
+
+input DeleteReservationInput {
+	id: ID!
+}
+
+input UpdateReservationInput {
+	id: ID!
+	ownerId: Int
+	storeId: Int
+	accounts: [AWSJSON]
+	order: AWSJSON
+	reservationToken: String
+}
+
 
 type Query {
     getAccount(id:ID!): Account
@@ -287,7 +345,10 @@ type Query {
 	listItems(filter: TableItemFilterInput, limit: Int, nextToken: String): ItemConnection
 	getOrder(orderId: Int!, createdAt: String!): order
 	listOrder(filter: TableOrderFilterInput, limit: Int, nextToken: String): orderConnection
-
+	getReservation(orderId: Int!, createdAt: String!): reservation
+	listReservation(filter: TableReservationFilterInput, limit: Int, nextToken: String): reservationConnection
+	getPaymentMethods(id:ID!): paymentMethods
+	listPaymentMethods(filter: TablePaymentMethodsFilterInput, limit: Int, nextToken: String): paymentMethodsConnection
 }
 type Mutation {
     addAccount(input:CreateAccountInput!): Account
@@ -309,7 +370,12 @@ type Mutation {
 	addOrderCompletedAt(orderId: ID!, completedAt: String!): order
 	updateOrder(input: UpdateOrdersInput!): order
 	deleteOrder(input: DeleteOrdersInput!): order
-	
+	addPaymentMethods(input:CreatePaymentMethodsInput!): paymentMethods
+	updatePaymentMethods(input:UpdatePaymentMethodsInput!): paymentMethods
+	deletePaymentMethods(input:DeletePaymentMethodsInput!): paymentMethods
+	createReservation(input: CreateReservationInput!): reservation
+	updateReservation(input: UpdateReservationInput!): reservation
+	deleteReservation(input: DeleteReservationInput!): reservation
 }
 
 type review {
@@ -373,6 +439,7 @@ type Account {
 	vegetarian: Boolean
 	vegan: Boolean
 	wheat: Boolean
+	paymentMethods: [paymentMethods]
 }
 
 type Item {
@@ -419,7 +486,7 @@ type store {
   open: Boolean
   active: Boolean
   reviews: [review]
-#   reservations: [reservation]
+  reservations: [reservation]
 #   tables: [table]
   orders: [order]
 }
@@ -448,7 +515,33 @@ type orderConnection {
 	nextToken: String
 }
 
+type reservation {
+	id: ID!
+	ownerId: Int
+	storeId: Int
+	accounts: [Account]
+	order: order
+	reservationToken: String
+}
 
+type reservationConnection{
+	items: [reservation]
+	nextToken: String
+}
+
+type paymentMethods {
+  id: ID
+  createdAt: String
+  accountId: String
+  details: String
+  token: String
+  type: String
+}
+
+type paymentMethodsConnection{
+	items: [paymentMethods]
+	nextToken: String
+}
 
 
 input TableBooleanFilterInput {

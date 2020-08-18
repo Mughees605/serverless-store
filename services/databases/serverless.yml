@@ -187,16 +187,6 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5
-        GlobalSecondaryIndexes:
-          - IndexName: "orderId-index"
-            KeySchema:
-              - AttributeName: "orderId" 
-                KeyType: "HASH"
-            Projection:
-              ProjectionType: "ALL"
-            ProvisionedThroughput:
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
     PaymentTable:
       Type: AWS::DynamoDB::Table
       Properties:
