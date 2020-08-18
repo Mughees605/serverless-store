@@ -20,18 +20,23 @@ const createReservation = async (args) => {
 
     try {
         let id = uuid.v1();
+        let date = new Date().toISOString()
         var params = {
             TableName: 'reservation-dev',
             Item: {
                 id: id,
                 ...args,
-            }
+                createdAt: date,
+                updatedAt: date,
+            },
+            ReturnValues: 'ALL_OLD',
+
         };
 
-        let result = await dynamodbLib.call("put", params).promise();
-        
+        let result = await dynamodbLib.call("put", params);
 
-        return sendResponse(200, result);
+
+        return sendResponse(200, { ...params.Item });
 
     } catch (error) {
         console.log(error);
@@ -44,6 +49,17 @@ let updateReservation = async (args) => {
     // Args id, name, profilepicture
     // only updates profile and name
     try {
+        let reservation = await dynamodbLib.call("get", {
+            TableName: 'reservation-dev',
+            Key: {
+                id: args.id,
+            }
+        });
+
+        if (!reservation.Item) {
+            return sendResponse(404, null, "Not Found!");
+        };
+
         let propFilter = ['storeId', 'reservationToken', 'orderId'];
         let propertiesToUpdate = Object.keys(args).filter(p => propFilter.includes(p));
 
@@ -56,7 +72,7 @@ let updateReservation = async (args) => {
         let params = {
             TableName: 'reservation-dev',
             Key: {
-               id: args.id,
+                id: args.id,
             },
             ...expression
         };
@@ -64,10 +80,26 @@ let updateReservation = async (args) => {
         let result = await dynamodbLib.call("update", params);
 
         console.log("Result = ", result);
-        return sendResponse(200, result);
+        return sendResponse(200, reservation.Item);
 
     } catch (error) {
         console.log(error);
         return sendResponse(500);
     }
+}
+
+const generateUpdateQuery = (fields) => {
+    let exp = {
+        UpdateExpression: 'set',
+        ExpressionAttributeNames: {},
+        ExpressionAttributeValues: {}
+    }
+    Object.entries(fields).forEach(([key, item]) => {
+        exp.UpdateExpression += ` #${key} = :${key},`;
+        exp.ExpressionAttributeNames[`#${key}`] = key;
+        exp.ExpressionAttributeValues[`:${key}`] = item
+    });
+    exp.UpdateExpression = exp.UpdateExpression.trim(',')
+    exp.UpdateExpression = exp.UpdateExpression.slice(0, -1);
+    return exp;
 }

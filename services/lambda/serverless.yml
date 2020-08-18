@@ -17,7 +17,6 @@ provider:
   name: aws
   runtime: nodejs10.x
   stage: dev
-  region: eu-west-2
   profile: store_user
   iamRoleStatements: # permissions for all of your functions can be set here
     - Effect: Allow
@@ -41,7 +40,20 @@ functions:
     package:
       exclude:
         - functions/**
-        - node_modules/**
       include:
         - functions/order-resolver.js
+  review:
+    handler: functions/review-resolver.main
+    package:
+      exclude:
+        - functions/**
+      include:
+        - functions/review-resolver.js
+  reservation:
+    handler: functions/reservation-resolver.main
+    package:
+      exclude:
+        - functions/**
+      include:
+        - functions/reservation-resolver.js
 

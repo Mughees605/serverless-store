@@ -7,8 +7,8 @@ exports.main = async (event, context, callback) => {
         case "createOrder": {
             return await createOrder(event.arguments.input);
         }
-        case "addCompletedAt": {
-            return await addCompletedAt(event.arguments);
+        case "addOrderCompletedAt": {
+            return await addOrderCompletedAt(event.arguments);
         }
         default:
             callback("Unknown field, unable to resolve" + event.field, null);
@@ -20,18 +20,22 @@ const createOrder = async (args) => {
 
     try {
         let id = uuid.v1();
+        let date = new Date().toISOString()
         var params = {
             TableName: 'order-dev',
             Item: {
                 orderId: id,
                 ...args,
-            }
+                createdAt: date,
+                updatedAt: date,
+            },
+            ReturnValues: 'ALL_OLD'
         };
 
-        let result = await dynamodbLib.call("put", params).promise();
-        
+        let result = await dynamodbLib.call("put", params);
 
-        return sendResponse(200, result);
+        console.log(result, "Result")
+        return sendResponse(200, { ...params.Item });
 
     } catch (error) {
         console.log(error);
@@ -40,7 +44,7 @@ const createOrder = async (args) => {
 }
 
 
-const addCompletedAt = async (args) => {
+const addOrderCompletedAt = async (args) => {
     /*
       Args: { orderId, completedAt }
     */
