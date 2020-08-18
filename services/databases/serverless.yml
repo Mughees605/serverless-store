@@ -61,8 +61,8 @@ resources:
           - AttributeName: reviewAt
             KeyType: RANGE
         ProvisionedThroughput:
-            ReadCapacityUnits: 6
-            WriteCapacityUnits: 6
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
         GlobalSecondaryIndexes:
           - IndexName: "storeId-index"
             KeySchema:
@@ -165,8 +165,8 @@ resources:
           - AttributeName: id 
             AttributeType: S
   
-          - AttributeName: orderId 
-            AttributeType: S
+          # - AttributeName: orderId 
+          #   AttributeType: S
 
           - AttributeName: storeId 
             AttributeType: S

@@ -1,19 +1,9 @@
-
-$util.qr($context.args.input.put("reviewAt", $util.defaultIfNull($ctx.args.input.reviewAt, $util.time.nowEpochSeconds())))
-
 {
-  "version": "2017-02-28",
-  "operation": "PutItem",
-  "key": {
-    "accountId": $util.dynamodb.toDynamoDBJson($ctx.args.input.accountId),
-    "reviewAt": $util.dynamodb.toDynamoDBJson($ctx.args.input.reviewAt),
-  },
-  "attributeValues": $util.dynamodb.toMapValuesJson($ctx.args.input),
-  "condition": {
-    "expression": "attribute_not_exists(#accountId) AND attribute_not_exists(#reviewAt)",
-    "expressionNames": {
-      "#accountId": "accountId",
-      "#reviewAt": "reviewAt",
-    },
-  },
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "field": "createReview",
+        "arguments": $utils.toJson($context.arguments),
+        "reviewAt": $util.time.nowEpochSeconds()
+    }
 }

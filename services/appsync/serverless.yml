@@ -13,9 +13,9 @@ custom:
   favoriteTable: favorite-${self:custom.stage}
   storeTable: store-${self:custom.stage}
   itemTable: item-${self:custom.stage}
-  orderTable: item-${self:custom.stage}
-  reservationTable: item-${self:custom.stage}
-  paymentTable: item-${self:custom.stage}
+  orderTable: order-${self:custom.stage}
+  reservationTable: reservation-${self:custom.stage}
+  paymentTable: payment-${self:custom.stage}
   
 
   stage: ${opt:stage, self:provider.stage}
@@ -151,15 +151,15 @@ custom:
         response: "shared-response.vtl"
 
       - type: Mutation 
-        dataSource:  ThtDynamodbReviewTable
+        dataSource:  ThtLambdaReviewFunction
         field: createReview
         request: "createReview-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbReviewTable
+        dataSource:  ThtLambdaReviewFunction
         field: updateReview
         request: "updateReview-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
         dataSource:  ThtDynamodbReviewTable
         field: deleteReview
@@ -235,15 +235,15 @@ custom:
         response: "shared-response.vtl"
 
       - type: Mutation 
-        dataSource:  ThtDynamodbReservationTable
+        dataSource:  ThtLambdaReservationFunction
         field: createReservation
         request: "createReservation-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbReservationTable
+        dataSource:  ThtLambdaReservationFunction
         field: updateReservation
         request: "updateReservation-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
         dataSource:  ThtDynamodbReservationTable
         field:   deleteReservation
@@ -307,7 +307,19 @@ custom:
         name: ThtLambdaOrderFunction
         description: ThtLambdaOrderFunction
         config:
-          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
+          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-order" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
+          serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
+      - type: AWS_LAMBDA
+        name: ThtLambdaReviewFunction
+        description: ThtLambdaReviewFunction
+        config:
+          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-review" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
+          serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
+      - type: AWS_LAMBDA
+        name: ThtLambdaReservationFunction
+        description: ThtLambdaReservationFunction
+        config:
+          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-reservation" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
           serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
       - type: AMAZON_DYNAMODB
         name: ThtDynamodbReservationTable
@@ -351,8 +363,12 @@ resources:
                   Action:
                     - "lambda:invokeFunction"
                   Resource:
-                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order"
-                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order:*"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-order"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-order:*"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-review"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-review:*"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-reservation"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-reservation:*"
     AppSyncDynamodbServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
@@ -390,4 +406,10 @@ resources:
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.storeTable}/*"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.itemTable}"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.itemTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.orderTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.orderTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reservationTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reservationTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}/*"
                 
