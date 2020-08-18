@@ -7,6 +7,7 @@ plugins:
   - serverless-pseudo-parameters
   
 custom:
+  lambdaService: "tht-lambda"
   accountTable: account-${self:custom.stage}
   reviewTable: review-${self:custom.stage}
   favoriteTable: favorite-${self:custom.stage}
@@ -197,10 +198,15 @@ custom:
         request: "deleteItem-request.vtl"
         response: "shared-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbOrderTable
+        dataSource:  ThtLambdaOrderFunction
         field: createOrder
         request: "createOrder-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
+      - type: Mutation 
+        dataSource:  ThtLambdaOrderFunction
+        field: addOrderCompletedAt
+        request: "addOrderCompletedAt-request.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
         dataSource:  ThtDynamodbOrderTable
         field: updateOrder
@@ -251,6 +257,12 @@ custom:
         config:
           tableName: ${self:custom.orderTable}
           serviceRoleArn: { Fn::GetAtt: [AppSyncDynamodbServiceRole, Arn] }
+      - type: AWS_LAMBDA
+        name: ThtLambdaOrderFunction
+        description: ThtLambdaOrderFunction
+        config:
+          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
+          serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
       # - type: AMAZON_DYNAMODB
       #   name: ThtDynamodbReservationTable
       #   description: ThtDynamodbReservationTable
@@ -265,6 +277,30 @@ provider:
 
 resources:
   Resources:
+    AppSyncLambdaServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "${self:custom.appSync.name}-Lambda-${self:custom.appSync.serviceRole}-${self:custom.stage}"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          - PolicyName: "${self:custom.appSync.name}-Lambda-${self:custom.appSync.serviceRole}-Policy-${self:custom.stage}"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "lambda:invokeFunction"
+                  Resource:
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-Order:*"
     AppSyncDynamodbServiceRole:
       Type: "AWS::IAM::Role"
       Properties:

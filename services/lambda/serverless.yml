@@ -1,0 +1,47 @@
+service: tht-lambda # NOTE: update this with your service name
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or fallsback to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  parcelTable: tht-${self:custom.stage}-parcel
+  esDomainName: tht-${self:custom.stage}-es
+  esRoleName: tht-lambda-es-role
+plugins:
+  - serverless-offline
+  - serverless-pseudo-parameters
+  - serverless-dotenv-plugin
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: dev
+  region: eu-west-2
+  profile: store_user
+  iamRoleStatements: # permissions for all of your functions can be set here
+    - Effect: Allow
+      Action: # Gives permission to DynamoDB tables in a specific region
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:#{AWS::Region}:*:*'
+    - Effect: Allow
+      Action: # Gives permission to DynamoDB tables in a specific region
+        - lambda:InvokeFunction
+      Resource: 'arn:aws:lambda:#{AWS::Region}:*:*'
+  
+
+functions:
+  order:
+    handler: functions/order-resolver.main
+    package:
+      exclude:
+        - functions/**
+        - node_modules/**
+      include:
+        - functions/order-resolver.js
+

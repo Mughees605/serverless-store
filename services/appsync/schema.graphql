@@ -306,6 +306,7 @@ type Mutation {
 	updateItem(input: UpdateItemInput!): Item
 	deleteItem(input: DeleteItemInput!): Item
 	createOrder(input: CreateOrdersInput!): order
+	addOrderCompletedAt(orderId: ID!, completedAt: String!): order
 	updateOrder(input: UpdateOrdersInput!): order
 	deleteOrder(input: DeleteOrdersInput!): order
 	

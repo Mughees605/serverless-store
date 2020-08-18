@@ -8,7 +8,7 @@ custom:
   storeTable: store-${self:custom.stage}
   itemTable: item-${self:custom.stage}
   orderTable: order-${self:custom.stage}
-  # reservationTable: reservation-${self:custom.stage}
+  reservationTable: reservation-${self:custom.stage}
   
 provider:
   name: aws
@@ -161,19 +161,18 @@ resources:
       Properties:
         TableName: ${self:custom.reservationTable}
         AttributeDefinitions:
-          - AttributeName: orderId 
+          - AttributeName: id 
             AttributeType: S
   
-          - AttributeName: createdAt 
+          - AttributeName: orderId 
             AttributeType: S
 
           - AttributeName: storeId 
             AttributeType: S
         KeySchema:
-          - AttributeName: orderId
+          - AttributeName: id
             KeyType: HASH
-          - AttributeName: createdAt
-            KeyType: RANGE
+       
         ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
@@ -181,6 +180,16 @@ resources:
           - IndexName: "storeId-index"
             KeySchema:
               - AttributeName: "storeId" 
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        GlobalSecondaryIndexes:
+          - IndexName: "orderId-index"
+            KeySchema:
+              - AttributeName: "orderId" 
                 KeyType: "HASH"
             Projection:
               ProjectionType: "ALL"

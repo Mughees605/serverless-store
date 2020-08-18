@@ -1,0 +1,9 @@
+#if($ctx.result.statusCode == 200)
+    $utils.toJson($context.result.data)
+#elseif($ctx.result.statusCode == 404)
+    $util.error("Not found")
+#elseif($ctx.result.statusCode == 401)
+    $util.error("Unauthorized")
+#else
+    $util.error($ctx.result.errorMessage)
+#end
