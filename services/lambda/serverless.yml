@@ -56,4 +56,11 @@ functions:
         - functions/**
       include:
         - functions/reservation-resolver.js
+  payment:
+    handler: functions/payment-resolver.main
+    package:
+      exclude:
+        - functions/**
+      include:
+        - functions/payment-resolver.js
 

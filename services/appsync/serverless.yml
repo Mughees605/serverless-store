@@ -251,15 +251,15 @@ custom:
         response: "shared-response.vtl"
 
       - type: Mutation 
-        dataSource:  ThtDynamodbPaymentTable
+        dataSource:  ThtLambdaPaymentFunction
         field: addPaymentMethods
         request: "addPaymentMethods-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
-        dataSource:  ThtDynamodbPaymentTable
+        dataSource:  ThtLambdaPaymentFunction
         field: updatePaymentMethods
         request: "updatePaymentMethods-request.vtl"
-        response: "shared-response.vtl"
+        response: "lambda-response.vtl"
       - type: Mutation 
         dataSource:  ThtDynamodbPaymentTable
         field: deletePaymentMethods
@@ -308,6 +308,12 @@ custom:
         description: ThtLambdaOrderFunction
         config:
           lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-order" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
+          serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
+      - type: AWS_LAMBDA
+        name: ThtLambdaPaymentFunction
+        description: ThtLambdaPaymentFunction
+        config:
+          lambdaFunctionArn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-payment" # Where GraphqlLambdaFunction is the lambda function cloudformation resource created by serverless for the serverless function named graphql
           serviceRoleArn: { Fn::GetAtt: [AppSyncLambdaServiceRole, Arn] }
       - type: AWS_LAMBDA
         name: ThtLambdaReviewFunction
@@ -369,6 +375,8 @@ resources:
                     - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-review:*"
                     - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-reservation"
                     - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-reservation:*"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-payment"
+                    - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.lambdaService}-${self:custom.stage}-payment:*"
     AppSyncDynamodbServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
@@ -410,6 +418,7 @@ resources:
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.orderTable}/*"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reservationTable}"
                     - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reservationTable}/*"
-                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}"
-                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.reviewTable}/*"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.paymentTable}"
+                    - "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.paymentTable}/*"
+                    
                 
