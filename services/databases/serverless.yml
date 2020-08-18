@@ -9,6 +9,7 @@ custom:
   itemTable: item-${self:custom.stage}
   orderTable: order-${self:custom.stage}
   reservationTable: reservation-${self:custom.stage}
+  paymentTable: payment-${self:custom.stage}
   
 provider:
   name: aws
@@ -196,3 +197,24 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5
+    PaymentTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.paymentTable}
+        AttributeDefinitions:
+          - AttributeName: accountId 
+            AttributeType: S
+  
+          - AttributeName: createdAt 
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: accountId
+            KeyType: HASH
+
+          - AttributeName: createdAt
+            KeyType: RANGE
+       
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
